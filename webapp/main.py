@@ -18,6 +18,10 @@ class Body(BaseModel):
     length: Union[int, None] = 20
 
 
+class Text(BaseModel):
+    text: str
+
+
 @app.get('/')
 def root():
     html_path = join(static_path, "index.html")
@@ -35,3 +39,10 @@ def generate(body: Body):
     """
     string = base64.b64encode(os.urandom(64))[:body.length].decode('utf-8')
     return {'token': string}
+
+
+@app.post('/checksum')
+def checksum(text: Text):
+    import hashlib
+    checksum = hashlib.sha256(text.text.encode()).hexdigest()
+    return {'checksum': checksum}
